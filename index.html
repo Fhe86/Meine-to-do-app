@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#1f6feb" />
+<title>Handwerk im Landkreis München - Dein Beruf wartet!</title>
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  :root {
+    --bg: #f5f7fb;
+    --surface: #ffffff;
+    --text: #1a1f2e;
+    --muted: #5b6478;
+    --primary: #1f6feb;
+    --primary-soft: #e7f0ff;
+    --accent: #ff7a45;
+    --green: #10b981;
+    --yellow: #f59e0b;
+    --purple: #8b5cf6;
+    --border: #e5e9f2;
+    --shadow: 0 4px 14px rgba(20, 30, 60, 0.06);
+    --shadow-hover: 0 10px 28px rgba(20, 30, 60, 0.12);
+    --radius: 18px;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "SF Pro Text",
+      Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    min-height: 100vh;
+    padding-bottom: env(safe-area-inset-bottom);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 18px;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    background: linear-gradient(135deg, #1f6feb 0%, #6c5ce7 100%);
+    color: #fff;
+    padding: 56px 0 64px;
+    border-radius: 0 0 32px 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: "";
+    position: absolute;
+    width: 320px;
+    height: 320px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+    top: -120px;
+    right: -80px;
+  }
+  .hero::after {
+    content: "";
+    position: absolute;
+    width: 220px;
+    height: 220px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 50%;
+    bottom: -90px;
+    left: -60px;
+  }
+  .hero-content {
+    position: relative;
+    z-index: 1;
+  }
+  .hero .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.18);
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    backdrop-filter: blur(10px);
+  }
+  .hero h1 {
+    font-size: 32px;
+    line-height: 1.15;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+  .hero p {
+    font-size: 16px;
+    opacity: 0.95;
+    max-width: 560px;
+  }
+
+  /* ---------- Suche ---------- */
+  .search-wrap {
+    margin-top: -28px;
+    margin-bottom: 18px;
+    position: relative;
+    z-index: 2;
+  }
+  .search {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    box-shadow: var(--shadow);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid var(--border);
+  }
+  .search svg {
+    flex-shrink: 0;
+    color: var(--muted);
+  }
+  .search input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 16px;
+    background: transparent;
+    color: var(--text);
+    font-family: inherit;
+  }
+  .search input::placeholder {
+    color: var(--muted);
+  }
+  .search button {
+    border: none;
+    background: var(--primary-soft);
+    color: var(--primary);
+    border-radius: 10px;
+    width: 32px;
+    height: 32px;
+    cursor: pointer;
+    font-size: 18px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .search.has-text button {
+    display: flex;
+  }
+
+  /* ---------- Filter ---------- */
+  .filters {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 4px 2px 14px;
+    margin: 0 -18px;
+    padding-left: 18px;
+    padding-right: 18px;
+    scrollbar-width: none;
+  }
+  .filters::-webkit-scrollbar {
+    display: none;
+  }
+  .chip {
+    flex-shrink: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 9px 14px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: inherit;
+  }
+  .chip:hover {
+    border-color: var(--primary);
+  }
+  .chip.active {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+  }
+
+  /* ---------- Stats ---------- */
+  .stats {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 4px 0 14px;
+    padding: 0 4px;
+  }
+  .stats strong {
+    color: var(--text);
+  }
+
+  /* ---------- Cards ---------- */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding-bottom: 24px;
+  }
+  @media (min-width: 600px) {
+    .grid {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (min-width: 900px) {
+    .grid {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+    .hero h1 {
+      font-size: 42px;
+    }
+  }
+
+  .card {
+    background: var(--surface);
+    border-radius: var(--radius);
+    padding: 18px;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--card-color, var(--primary));
+  }
+  .card:active {
+    transform: scale(0.98);
+  }
+  @media (hover: hover) {
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-hover);
+    }
+  }
+  .card-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .emoji {
+    font-size: 36px;
+    width: 56px;
+    height: 56px;
+    background: var(--primary-soft);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .card h3 {
+    font-size: 17px;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 2px;
+  }
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .tag {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    background: var(--bg);
+    padding: 3px 8px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .card p.short {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.45;
+  }
+  .more {
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 14px;
+    margin-top: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* ---------- Empty state ---------- */
+  .empty {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--muted);
+  }
+  .empty .big {
+    font-size: 48px;
+    margin-bottom: 12px;
+  }
+  .empty h3 {
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  /* ---------- Info-Banner ---------- */
+  .info-banner {
+    background: linear-gradient(135deg, #fff7ed 0%, #ffe8d4 100%);
+    border-radius: var(--radius);
+    padding: 22px;
+    margin: 8px 0 24px;
+    border: 1px solid #fcd9b6;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+  .info-banner .ico {
+    font-size: 32px;
+    line-height: 1;
+  }
+  .info-banner h2 {
+    font-size: 17px;
+    margin-bottom: 4px;
+    color: #b54708;
+  }
+  .info-banner p {
+    font-size: 14px;
+    color: #92400e;
+    line-height: 1.5;
+  }
+
+  /* ---------- Footer ---------- */
+  footer {
+    background: #0f172a;
+    color: #cbd5e1;
+    padding: 32px 0;
+    margin-top: 24px;
+    border-radius: 32px 32px 0 0;
+  }
+  footer h3 {
+    color: #fff;
+    margin-bottom: 8px;
+    font-size: 18px;
+  }
+  footer p {
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+  footer .small {
+    font-size: 12px;
+    opacity: 0.6;
+    margin-top: 16px;
+  }
+  footer .cities {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 12px 0;
+  }
+  footer .city {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+  }
+
+  /* ---------- Modal ---------- */
+  .modal-bg {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 100;
+    padding: 0;
+  }
+  @media (min-width: 700px) {
+    .modal-bg {
+      align-items: center;
+      padding: 20px;
+    }
+  }
+  .modal-bg.open {
+    display: flex;
+    animation: fade 0.2s ease;
+  }
+  @keyframes fade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .modal {
+    background: var(--surface);
+    width: 100%;
+    max-width: 560px;
+    max-height: 90vh;
+    border-radius: 24px 24px 0 0;
+    overflow-y: auto;
+    padding: 0 0 24px;
+    animation: slide 0.25s ease;
+    -webkit-overflow-scrolling: touch;
+  }
+  @media (min-width: 700px) {
+    .modal {
+      border-radius: 24px;
+    }
+  }
+  @keyframes slide {
+    from { transform: translateY(40px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+  .modal-head {
+    padding: 20px 22px 6px;
+    position: sticky;
+    top: 0;
+    background: var(--surface);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    z-index: 1;
+    border-bottom: 1px solid var(--border);
+  }
+  .modal-head .left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    padding-bottom: 14px;
+  }
+  .modal-head .emoji-big {
+    font-size: 44px;
+    width: 64px;
+    height: 64px;
+    background: var(--primary-soft);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .modal-head h2 {
+    font-size: 22px;
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+  .close-btn {
+    background: var(--bg);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--text);
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: inherit;
+  }
+  .modal-body {
+    padding: 18px 22px;
+  }
+  .modal-section {
+    margin-bottom: 22px;
+  }
+  .modal-section h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .modal-section p,
+  .modal-section li {
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--text);
+  }
+  .modal-section ul {
+    list-style: none;
+    padding: 0;
+  }
+  .modal-section ul li {
+    padding: 8px 0 8px 28px;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+  }
+  .modal-section ul li:last-child {
+    border-bottom: none;
+  }
+  .modal-section ul li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    top: 8px;
+    color: var(--green);
+    font-weight: 700;
+    background: #d1fae5;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+  }
+  .cool-box {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    border-radius: 14px;
+    padding: 14px 16px;
+    color: #78350f;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .school-box {
+    background: var(--primary-soft);
+    border-radius: 14px;
+    padding: 14px 16px;
+    color: #1e3a8a;
+    font-size: 15px;
+    line-height: 1.5;
+    font-weight: 500;
+  }
+
+  body.modal-open {
+    overflow: hidden;
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="container hero-content">
+    <span class="badge">📍 Landkreis München</span>
+    <h1>Dein Handwerk.<br />Deine Zukunft.</h1>
+    <p>Entdecke spannende Berufe in Oberschleißheim, Unterschleißheim, Dachau, Garching und Umgebung. Hier findest du heraus, was zu dir passt!</p>
+  </div>
+</header>
+
+<main class="container">
+
+  <div class="search-wrap">
+    <div class="search" id="searchBox">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="7"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input type="text" id="searchInput" placeholder="Beruf suchen..." autocomplete="off" />
+      <button id="clearBtn" aria-label="Löschen">×</button>
+    </div>
+  </div>
+
+  <div class="filters" id="filters"></div>
+
+  <div class="stats" id="stats"></div>
+
+  <section class="grid" id="grid"></section>
+
+  <div class="info-banner">
+    <span class="ico">💡</span>
+    <div>
+      <h2>Mach ein Praktikum!</h2>
+      <p>Viele Betriebe in deiner Nähe bieten Schülerpraktika an. So kannst du den Beruf live ausprobieren – und vielleicht direkt einen Ausbildungsplatz finden. Frag in der Schule oder direkt im Betrieb nach!</p>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <div class="container">
+    <h3>🛠️ Handwerk im Landkreis München</h3>
+    <p>Über 130 Handwerksberufe gibt es in Deutschland – viele davon kannst du direkt vor deiner Haustür lernen.</p>
+    <div class="cities">
+      <span class="city">Oberschleißheim</span>
+      <span class="city">Unterschleißheim</span>
+      <span class="city">Dachau</span>
+      <span class="city">Garching</span>
+      <span class="city">Ismaning</span>
+      <span class="city">Eching</span>
+      <span class="city">Karlsfeld</span>
+    </div>
+    <p>👉 Tipp: Bei der <strong>Handwerkskammer München</strong> findest du freie Ausbildungsplätze und Beratung in deiner Nähe.</p>
+    <p class="small">Diese Seite ist ein Info-Angebot für Schülerinnen und Schüler der Mittelschule.</p>
+  </div>
+</footer>
+
+<div class="modal-bg" id="modalBg" role="dialog" aria-modal="true">
+  <div class="modal" id="modal"></div>
+</div>
+
+<script>
+  const categories = [
+    { id: "all",    label: "Alle",            icon: "🌟" },
+    { id: "tech",   label: "Mit Technik",     icon: "⚙️" },
+    { id: "people", label: "Mit Menschen",    icon: "👥" },
+    { id: "out",    label: "Draußen",         icon: "🌤️" },
+    { id: "build",  label: "Bauen",           icon: "🏗️" },
+    { id: "food",   label: "Mit Lebensmitteln", icon: "🍴" },
+    { id: "creative", label: "Kreativ",       icon: "🎨" }
+  ];
+
+  const jobs = [
+    {
+      name: "Elektroniker für Energie- und Gebäudetechnik",
+      short: "Elektriker – installiert Strom, Lampen, Schalter und smarte Technik in Häusern.",
+      emoji: "⚡",
+      color: "#f59e0b",
+      cats: ["tech", "build"],
+      tasks: [
+        "Kabel verlegen und Steckdosen einbauen",
+        "Schaltschränke anschließen und prüfen",
+        "Smart-Home-Systeme installieren"
+      ],
+      school: "Mittlerer Schulabschluss ist gut, Mittelschulabschluss reicht oft auch.",
+      cool: "Du sorgst dafür, dass überall Strom fließt – ohne dich gehen die Lichter aus! 💡"
+    },
+    {
+      name: "Schreiner / Tischler",
+      short: "Baut Möbel, Türen und Treppen aus Holz – mit modernen Maschinen und eigenen Ideen.",
+      emoji: "🪵",
+      color: "#92400e",
+      cats: ["creative", "build"],
+      tasks: [
+        "Holz zuschneiden und formen",
+        "Möbel zusammenbauen und montieren",
+        "Oberflächen schleifen und lackieren"
+      ],
+      school: "Mittelschulabschluss reicht. Wer gut in Mathe ist, hat einen Vorteil.",
+      cool: "Am Ende des Tages siehst du, was du mit deinen Händen geschaffen hast! 🪚"
+    },
+    {
+      name: "Anlagenmechaniker SHK",
+      short: "Macht Heizungen, Bäder und Klimaanlagen – sehr gefragter Job!",
+      emoji: "🔧",
+      color: "#0ea5e9",
+      cats: ["tech", "build"],
+      tasks: [
+        "Heizungen einbauen und reparieren",
+        "Badezimmer planen und montieren",
+        "Solar- und Wärmepumpen installieren"
+      ],
+      school: "Mittelschulabschluss reicht. Wichtig: keine Angst vor Wasser und Werkzeug.",
+      cool: "Du arbeitest an der Zukunft: Wärmepumpen und nachhaltige Heizungen! 🌿"
+    },
+    {
+      name: "Friseur",
+      short: "Schneidet Haare, färbt, stylt – und macht Menschen glücklich.",
+      emoji: "✂️",
+      color: "#ec4899",
+      cats: ["people", "creative"],
+      tasks: [
+        "Haare schneiden und föhnen",
+        "Farben mischen und auftragen",
+        "Frisuren für besondere Anlässe stylen"
+      ],
+      school: "Mittelschulabschluss reicht. Du solltest gerne mit Menschen reden.",
+      cool: "Du bist Künstler:in und Berater:in zugleich – jeder Tag ist anders! 💇"
+    },
+    {
+      name: "Maler und Lackierer",
+      short: "Streicht Wände, gestaltet Räume, lackiert Möbel und Fassaden.",
+      emoji: "🎨",
+      color: "#8b5cf6",
+      cats: ["creative", "build"],
+      tasks: [
+        "Wände vorbereiten und streichen",
+        "Tapeten kleben und Muster gestalten",
+        "Außenfassaden renovieren"
+      ],
+      school: "Mittelschulabschluss reicht völlig.",
+      cool: "Du verwandelst graue Räume in echte Wohlfühl-Orte! 🌈"
+    },
+    {
+      name: "Kfz-Mechatroniker",
+      short: "Repariert Autos, Motorräder und auch E-Autos.",
+      emoji: "🚗",
+      color: "#ef4444",
+      cats: ["tech"],
+      tasks: [
+        "Motoren prüfen und reparieren",
+        "Computer-Systeme im Auto auslesen",
+        "Bremsen, Reifen und Elektronik warten"
+      ],
+      school: "Mittelschulabschluss reicht, Mittlere Reife ist oft besser.",
+      cool: "Autos werden immer technischer – du arbeitest mit Hightech! 🔧"
+    },
+    {
+      name: "Bäcker",
+      short: "Backt Brot, Brötchen, Kuchen – frühe Schicht, aber leckerer Job.",
+      emoji: "🥖",
+      color: "#d97706",
+      cats: ["food", "creative"],
+      tasks: [
+        "Teige kneten und vorbereiten",
+        "Brote und Brötchen backen",
+        "Torten und Gebäck verzieren"
+      ],
+      school: "Mittelschulabschluss reicht.",
+      cool: "Du machst die besten Brötchen der Stadt – und alle freuen sich morgens! 🥐"
+    },
+    {
+      name: "Fleischer / Metzger",
+      short: "Verarbeitet Fleisch, macht Wurst und berät Kunden im Laden.",
+      emoji: "🥩",
+      color: "#dc2626",
+      cats: ["food", "people"],
+      tasks: [
+        "Fleisch zerlegen und vorbereiten",
+        "Wurst und Schinken herstellen",
+        "Kundinnen und Kunden im Laden bedienen"
+      ],
+      school: "Mittelschulabschluss reicht.",
+      cool: "Du lernst echtes Foodhandwerk – und kannst später sogar deinen eigenen Laden haben! 🛍️"
+    },
+    {
+      name: "Maurer",
+      short: "Baut Häuser, Mauern und Gebäude aus Stein und Beton.",
+      emoji: "🧱",
+      color: "#78716c",
+      cats: ["build", "out"],
+      tasks: [
+        "Wände und Mauern hochziehen",
+        "Beton mischen und gießen",
+        "Baupläne lesen und umsetzen"
+      ],
+      school: "Mittelschulabschluss reicht.",
+      cool: "Du kannst Jahre später deinen Kindern zeigen: Das Haus hab ich gebaut! 🏡"
+    },
+    {
+      name: "Dachdecker",
+      short: "Macht Dächer dicht, baut Solaranlagen ein – immer hoch oben.",
+      emoji: "🏠",
+      color: "#dc2626",
+      cats: ["build", "out"],
+      tasks: [
+        "Dachziegel verlegen",
+        "Dächer gegen Wasser abdichten",
+        "Solarpanels montieren"
+      ],
+      school: "Mittelschulabschluss reicht. Du solltest schwindelfrei sein.",
+      cool: "Bester Ausblick im Job – und du arbeitest jeden Tag draußen! ☀️"
+    },
+    {
+      name: "Fliesenleger",
+      short: "Verlegt Fliesen in Bädern, Küchen und auf Terrassen.",
+      emoji: "🟦",
+      color: "#0891b2",
+      cats: ["build", "creative"],
+      tasks: [
+        "Untergrund vorbereiten",
+        "Fliesen schneiden und verlegen",
+        "Fugen sauber verfüllen"
+      ],
+      school: "Mittelschulabschluss reicht.",
+      cool: "Genauigkeit zahlt sich aus – Fliesenleger sind sehr gefragt und verdienen gut! 💰"
+    },
+    {
+      name: "Zimmerer",
+      short: "Baut Holzhäuser, Dachstühle und Treppen – auch ganz oben.",
+      emoji: "🪚",
+      color: "#a16207",
+      cats: ["build", "out"],
+      tasks: [
+        "Dachstühle aus Holz aufstellen",
+        "Holzbalken zusägen und verbinden",
+        "Holzhäuser komplett bauen"
+      ],
+      school: "Mittelschulabschluss reicht.",
+      cool: "Holzbau ist Trend – nachhaltig, modern und super gefragt! 🌲"
+    },
+    {
+      name: "Garten- und Landschaftsbauer",
+      short: "Gestaltet Gärten, Parks und Spielplätze.",
+      emoji: "🌳",
+      color: "#16a34a",
+      cats: ["out", "creative"],
+      tasks: [
+        "Pflanzen setzen und pflegen",
+        "Wege und Terrassen pflastern",
+        "Teiche und Mauern bauen"
+      ],
+      school: "Mittelschulabschluss reicht.",
+      cool: "Du arbeitest immer draußen in der Natur – kein Tag im stickigen Büro! 🌻"
+    },
+    {
+      name: "Konditor",
+      short: "Macht Torten, Pralinen und süße Kunstwerke.",
+      emoji: "🍰",
+      color: "#db2777",
+      cats: ["food", "creative"],
+      tasks: [
+        "Torten backen und verzieren",
+        "Pralinen und Schokolade herstellen",
+        "Hochzeitstorten gestalten"
+      ],
+      school: "Mittelschulabschluss reicht.",
+      cool: "Du bist ein Künstler – und kannst dein Werk sogar essen! 🧁"
+    },
+    {
+      name: "Augenoptiker",
+      short: "Bert Kunden bei Brillen, schleift Gläser, macht Sehtests.",
+      emoji: "👓",
+      color: "#0284c7",
+      cats: ["tech", "people"],
+      tasks: [
+        "Sehtests durchführen",
+        "Brillengläser einschleifen",
+        "Kundinnen und Kunden bei der Auswahl beraten"
+      ],
+      school: "Mittlere Reife ist meistens nötig.",
+      cool: "Du hilfst Menschen, wieder klar zu sehen – ein richtig schönes Gefühl! 👀"
+    },
+    {
+      name: "Zahntechniker",
+      short: "Baut Zahnersatz, Kronen und Zahnspangen im Labor.",
+      emoji: "🦷",
+      color: "#06b6d4",
+      cats: ["tech", "creative"],
+      tasks: [
+        "Zähne aus Keramik formen",
+        "Zahnspangen und Brücken bauen",
+        "Mit 3D-Druckern und CAD arbeiten"
+      ],
+      school: "Mittlere Reife ist von Vorteil.",
+      cool: "Hightech-Beruf mit 3D-Druck und Design – richtig modern! 🖨️"
+    },
+    {
+      name: "Goldschmied",
+      short: "Macht Schmuck aus Gold, Silber und Edelsteinen.",
+      emoji: "💍",
+      color: "#ca8a04",
+      cats: ["creative"],
+      tasks: [
+        "Ringe und Ketten herstellen",
+        "Edelsteine fassen",
+        "Alten Schmuck reparieren"
+      ],
+      school: "Mittelschulabschluss reicht. Talent ist wichtiger.",
+      cool: "Du machst echte Schätze, die Menschen ihr Leben lang tragen! ✨"
+    },
+    {
+      name: "Mechatroniker",
+      short: "Baut und repariert Maschinen, die Mechanik + Elektronik kombinieren.",
+      emoji: "🤖",
+      color: "#4f46e5",
+      cats: ["tech"],
+      tasks: [
+        "Maschinen montieren",
+        "Steuerungen programmieren",
+        "Roboter warten"
+      ],
+      school: "Mittlere Reife ist oft nötig.",
+      cool: "Du arbeitest mit Robotern und Industrie 4.0 – die Zukunft! 🤖"
+    },
+    {
+      name: "Karosseriebauer",
+      short: "Repariert Auto-Karosserien nach Unfällen oder baut sie um.",
+      emoji: "🚙",
+      color: "#7c3aed",
+      cats: ["tech"],
+      tasks: [
+        "Beulen ausbeulen",
+        "Karosserieteile schweißen",
+        "Lackvorbereitung"
+      ],
+      school: "Mittelschulabschluss reicht.",
+      cool: "Aus einem kaputten Auto wird wieder ein schickes Fahrzeug! 🛠️"
+    },
+    {
+      name: "Raumausstatter",
+      short: "Verlegt Böden, hängt Vorhänge auf, polstert Möbel.",
+      emoji: "🛋️",
+      color: "#be185d",
+      cats: ["creative", "build"],
+      tasks: [
+        "Teppiche und Laminat verlegen",
+        "Gardinen und Rollos anbringen",
+        "Sofas und Sessel neu polstern"
+      ],
+      school: "Mittelschulabschluss reicht.",
+      cool: "Du gestaltest, wo Menschen wohnen und sich wohlfühlen! 🏡"
+    },
+    {
+      name: "Bauzeichner",
+      short: "Zeichnet Pläne für Häuser am Computer mit CAD-Programmen.",
+      emoji: "📐",
+      color: "#0369a1",
+      cats: ["tech", "creative"],
+      tasks: [
+        "Baupläne am Computer erstellen",
+        "Mit Architekten zusammenarbeiten",
+        "3D-Modelle von Gebäuden machen"
+      ],
+      school: "Mittlere Reife ist meistens nötig.",
+      cool: "Aus deiner Zeichnung wird ein echtes Haus – ziemlich krass! 🏢"
+    },
+    {
+      name: "Bäckereifachverkäufer",
+      short: "Verkauft Brot und Brötchen, berät und macht den Laden schön.",
+      emoji: "🥯",
+      color: "#f97316",
+      cats: ["food", "people"],
+      tasks: [
+        "Kunden bedienen",
+        "Theke schön dekorieren",
+        "Belegte Brötchen vorbereiten"
+      ],
+      school: "Mittelschulabschluss reicht.",
+      cool: "Morgens duftet es nach frischem Brot – besser als jedes Parfüm! 🥖"
+    },
+    {
+      name: "Hörakustiker",
+      short: "Hilft Menschen, wieder besser zu hören – mit Hörgeräten.",
+      emoji: "👂",
+      color: "#0d9488",
+      cats: ["tech", "people"],
+      tasks: [
+        "Hörtests machen",
+        "Hörgeräte einstellen",
+        "Kunden beraten und begleiten"
+      ],
+      school: "Mittlere Reife ist nötig.",
+      cool: "Du gibst Menschen ein Stück Lebensqualität zurück – echt wertvoll! 💙"
+    },
+    {
+      name: "Schornsteinfeger",
+      short: "Reinigt Schornsteine und prüft Heizungen – bringt angeblich Glück!",
+      emoji: "🧹",
+      color: "#1e293b",
+      cats: ["tech", "out"],
+      tasks: [
+        "Kamine und Schornsteine reinigen",
+        "Heizungen auf Sicherheit prüfen",
+        "Beratung zu Energie und Klima"
+      ],
+      school: "Mittelschulabschluss reicht.",
+      cool: "Ein Beruf mit Tradition – und du bist viel draußen unterwegs! 🍀"
+    }
+  ];
+
+  const grid = document.getElementById("grid");
+  const filtersEl = document.getElementById("filters");
+  const searchInput = document.getElementById("searchInput");
+  const searchBox = document.getElementById("searchBox");
+  const clearBtn = document.getElementById("clearBtn");
+  const statsEl = document.getElementById("stats");
+  const modalBg = document.getElementById("modalBg");
+  const modal = document.getElementById("modal");
+
+  let activeFilter = "all";
+  let searchText = "";
+
+  function renderFilters() {
+    filtersEl.innerHTML = categories.map(c =>
+      `<button class="chip ${c.id === activeFilter ? "active" : ""}" data-cat="${c.id}">
+        <span>${c.icon}</span><span>${c.label}</span>
+      </button>`
+    ).join("");
+
+    filtersEl.querySelectorAll(".chip").forEach(btn => {
+      btn.addEventListener("click", () => {
+        activeFilter = btn.dataset.cat;
+        renderFilters();
+        renderGrid();
+      });
+    });
+  }
+
+  function getFiltered() {
+    const q = searchText.trim().toLowerCase();
+    return jobs.filter(job => {
+      const catOk = activeFilter === "all" || job.cats.includes(activeFilter);
+      if (!catOk) return false;
+      if (!q) return true;
+      return (
+        job.name.toLowerCase().includes(q) ||
+        job.short.toLowerCase().includes(q) ||
+        job.tasks.some(t => t.toLowerCase().includes(q))
+      );
+    });
+  }
+
+  function escapeHtml(str) {
+    return str.replace(/[&<>"']/g, c => ({
+      "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+    }[c]));
+  }
+
+  function renderGrid() {
+    const list = getFiltered();
+    statsEl.innerHTML = `<strong>${list.length}</strong> Beruf${list.length === 1 ? "" : "e"} gefunden`;
+
+    if (list.length === 0) {
+      grid.innerHTML = `
+        <div class="empty" style="grid-column: 1/-1;">
+          <div class="big">🔎</div>
+          <h3>Nichts gefunden</h3>
+          <p>Probier einen anderen Suchbegriff oder Filter.</p>
+        </div>`;
+      return;
+    }
+
+    grid.innerHTML = list.map((job, i) => {
+      const tags = job.cats.map(c => {
+        const cat = categories.find(x => x.id === c);
+        return cat ? `<span class="tag">${cat.icon} ${cat.label}</span>` : "";
+      }).join("");
+
+      return `
+        <article class="card" data-idx="${jobs.indexOf(job)}" style="--card-color: ${job.color}">
+          <div class="card-head">
+            <div class="emoji" style="background: ${job.color}22">${job.emoji}</div>
+            <div>
+              <h3>${escapeHtml(job.name)}</h3>
+              <div class="tags">${tags}</div>
+            </div>
+          </div>
+          <p class="short">${escapeHtml(job.short)}</p>
+          <span class="more">Mehr erfahren →</span>
+        </article>`;
+    }).join("");
+
+    grid.querySelectorAll(".card").forEach(card => {
+      card.addEventListener("click", () => openModal(parseInt(card.dataset.idx, 10)));
+    });
+  }
+
+  function openModal(idx) {
+    const job = jobs[idx];
+    modal.innerHTML = `
+      <div class="modal-head">
+        <div class="left">
+          <div class="emoji-big" style="background: ${job.color}22">${job.emoji}</div>
+          <div>
+            <h2>${escapeHtml(job.name)}</h2>
+            <div class="tags">${job.cats.map(c => {
+              const cat = categories.find(x => x.id === c);
+              return cat ? `<span class="tag">${cat.icon} ${cat.label}</span>` : "";
+            }).join("")}</div>
+          </div>
+        </div>
+        <button class="close-btn" id="closeBtn" aria-label="Schließen">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="modal-section">
+          <h4>📝 Was macht man?</h4>
+          <p>${escapeHtml(job.short)}</p>
+        </div>
+        <div class="modal-section">
+          <h4>🛠️ Deine Aufgaben</h4>
+          <ul>
+            ${job.tasks.map(t => `<li>${escapeHtml(t)}</li>`).join("")}
+          </ul>
+        </div>
+        <div class="modal-section">
+          <h4>🎓 Schulabschluss</h4>
+          <div class="school-box">${escapeHtml(job.school)}</div>
+        </div>
+        <div class="modal-section">
+          <h4>✨ Warum ist das cool?</h4>
+          <div class="cool-box">${escapeHtml(job.cool)}</div>
+        </div>
+        <div class="modal-section">
+          <h4>📍 In deiner Nähe</h4>
+          <p>Im Landkreis München (Oberschleißheim, Unterschleißheim, Dachau, Garching ...) gibt es viele Betriebe, die diesen Beruf ausbilden. Frag in der Schule nach einem <strong>Praktikumsplatz</strong>!</p>
+        </div>
+      </div>
+    `;
+    modalBg.classList.add("open");
+    document.body.classList.add("modal-open");
+    document.getElementById("closeBtn").addEventListener("click", closeModal);
+  }
+
+  function closeModal() {
+    modalBg.classList.remove("open");
+    document.body.classList.remove("modal-open");
+  }
+
+  modalBg.addEventListener("click", e => {
+    if (e.target === modalBg) closeModal();
+  });
+
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") closeModal();
+  });
+
+  searchInput.addEventListener("input", e => {
+    searchText = e.target.value;
+    searchBox.classList.toggle("has-text", searchText.length > 0);
+    renderGrid();
+  });
+
+  clearBtn.addEventListener("click", () => {
+    searchInput.value = "";
+    searchText = "";
+    searchBox.classList.remove("has-text");
+    renderGrid();
+    searchInput.focus();
+  });
+
+  renderFilters();
+  renderGrid();
+</script>
+
+</body>
+</html>
