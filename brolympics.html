@@ -95,6 +95,33 @@
   button.danger { background: #fde8e8; color: #d63a3a; padding: 6px 12px; font-size: 13px; }
   button.danger:hover { background: #f9d2d2; }
 
+  /* ---------- Personen-Knöpfe (Tabs) ---------- */
+  .person-nav {
+    display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px;
+  }
+  .person-btn {
+    background: var(--primary-soft);
+    color: var(--primary);
+    border: 1px solid transparent;
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-weight: 700;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .person-btn:hover { background: #d8e6ff; }
+  .person-btn.active {
+    background: var(--primary);
+    color: #fff;
+    box-shadow: var(--shadow);
+  }
+  .person-btn .pts-badge {
+    font-size: 12px; font-weight: 700;
+    background: rgba(255,255,255,0.35);
+    padding: 2px 8px; border-radius: 999px;
+    font-variant-numeric: tabular-nums;
+  }
+  .person-btn:not(.active) .pts-badge { background: #fff; }
+
   /* ---------- Athlete card ---------- */
   .athlete { margin-top: 16px; }
   .athlete-head {
@@ -232,6 +259,7 @@ const CATEGORIES = [
 
 const STORAGE_KEY = "brolympics_v1";
 let athletes = load();
+let selectedId = athletes.length ? athletes[0].id : null;
 
 /* ---------- Persistenz ---------- */
 function load() {
@@ -281,81 +309,102 @@ function render() {
   save();
 }
 
+// Baut die Eingabe-Karte einer Person
+function buildAthleteCard(a) {
+  const card = document.createElement("div");
+  card.className = "card athlete";
+
+  const head = document.createElement("div");
+  head.className = "athlete-head";
+  head.innerHTML = `<span class="athlete-name">${escapeHtml(a.name)}</span>`;
+  const del = document.createElement("button");
+  del.className = "danger";
+  del.textContent = "Entfernen";
+  del.onclick = () => { athletes = athletes.filter(x => x.id !== a.id); render(); };
+  head.appendChild(del);
+  card.appendChild(head);
+
+  const grid = document.createElement("div");
+  grid.className = "disciplines";
+
+  CATEGORIES.forEach(cat => {
+    const cd = a[cat.key];
+    const disc = document.createElement("div");
+    disc.className = "discipline";
+
+    // Auswahl-Dropdown (nur wenn mehrere Optionen)
+    let selectHtml = "";
+    if (cat.options.length > 1) {
+      selectHtml = `<select data-id="${a.id}" data-cat="${cat.key}" class="type-select">` +
+        cat.options.map(o =>
+          `<option value="${o}" ${o === cd.type ? "selected" : ""}>${BENCHMARKS[o].label}</option>`
+        ).join("") + `</select>`;
+    } else {
+      selectHtml = `<div style="font-weight:700;margin-bottom:10px">${BENCHMARKS[cd.type].label}</div>`;
+    }
+
+    const unit = BENCHMARKS[cd.type].unit;
+    const best = bestAttempt(cd);
+    const labels = ["1. Versuch", "2. Versuch", "3. Versuch"];
+
+    const attemptsHtml = cd.attempts.map((val, i) => {
+      const isBest = best !== null && parseVal(val) === best;
+      return `<div class="att-wrap">
+        <span class="att-label">${labels[i]}</span>
+        <input type="text" inputmode="decimal" value="${val}" placeholder="–"
+               class="${isBest ? "best" : ""}"
+               data-id="${a.id}" data-cat="${cat.key}" data-idx="${i}" />
+      </div>`;
+    }).join("");
+
+    disc.innerHTML = `
+      <h3>${cat.icon} ${cat.label}</h3>
+      ${selectHtml}
+      <div class="attempts">${attemptsHtml}</div>
+      <div class="disc-result">
+        <span>Bester: <strong>${best !== null ? best.toLocaleString("de-DE") + " " + unit : "–"}</strong></span>
+        <span class="disc-points">${points(cd).toLocaleString("de-DE")} Pkt</span>
+      </div>`;
+    grid.appendChild(disc);
+  });
+
+  card.appendChild(grid);
+
+  const tot = document.createElement("div");
+  tot.style.cssText = "margin-top:14px;text-align:right;font-weight:800;font-size:16px";
+  tot.innerHTML = `Gesamt: <span style="color:var(--primary)">${totalPoints(a).toLocaleString("de-DE")} Punkte</span>`;
+  card.appendChild(tot);
+
+  return card;
+}
+
 function renderAthletes() {
   const root = document.getElementById("athletes");
   root.innerHTML = "";
   if (!athletes.length) {
+    selectedId = null;
     root.innerHTML = '<div class="card empty">Noch keine Teilnehmer. Trage oben den ersten Namen ein! 👆</div>';
     return;
   }
 
+  // Gültige Auswahl sicherstellen (z. B. nach Löschen)
+  if (!athletes.some(a => a.id === selectedId)) selectedId = athletes[0].id;
+
+  // Knopf-Leiste: ein Button pro Person
+  const nav = document.createElement("div");
+  nav.className = "person-nav";
   athletes.forEach(a => {
-    const card = document.createElement("div");
-    card.className = "card athlete";
-
-    const head = document.createElement("div");
-    head.className = "athlete-head";
-    head.innerHTML = `<span class="athlete-name">${escapeHtml(a.name)}</span>`;
-    const del = document.createElement("button");
-    del.className = "danger";
-    del.textContent = "Entfernen";
-    del.onclick = () => { athletes = athletes.filter(x => x.id !== a.id); render(); };
-    head.appendChild(del);
-    card.appendChild(head);
-
-    const grid = document.createElement("div");
-    grid.className = "disciplines";
-
-    CATEGORIES.forEach(cat => {
-      const cd = a[cat.key];
-      const disc = document.createElement("div");
-      disc.className = "discipline";
-
-      // Auswahl-Dropdown (nur wenn mehrere Optionen)
-      let selectHtml = "";
-      if (cat.options.length > 1) {
-        selectHtml = `<select data-id="${a.id}" data-cat="${cat.key}" class="type-select">` +
-          cat.options.map(o =>
-            `<option value="${o}" ${o === cd.type ? "selected" : ""}>${BENCHMARKS[o].label}</option>`
-          ).join("") + `</select>`;
-      } else {
-        selectHtml = `<div style="font-weight:700;margin-bottom:10px">${BENCHMARKS[cd.type].label}</div>`;
-      }
-
-      const unit = BENCHMARKS[cd.type].unit;
-      const best = bestAttempt(cd);
-      const labels = ["1. Versuch", "2. Versuch", "3. Versuch"];
-
-      const attemptsHtml = cd.attempts.map((val, i) => {
-        const isBest = best !== null && parseVal(val) === best;
-        return `<div class="att-wrap">
-          <span class="att-label">${labels[i]}</span>
-          <input type="text" inputmode="decimal" value="${val}" placeholder="–"
-                 class="${isBest ? "best" : ""}"
-                 data-id="${a.id}" data-cat="${cat.key}" data-idx="${i}" />
-        </div>`;
-      }).join("");
-
-      disc.innerHTML = `
-        <h3>${cat.icon} ${cat.label}</h3>
-        ${selectHtml}
-        <div class="attempts">${attemptsHtml}</div>
-        <div class="disc-result">
-          <span>Bester: <strong>${best !== null ? best.toLocaleString("de-DE") + " " + unit : "–"}</strong></span>
-          <span class="disc-points">${points(cd).toLocaleString("de-DE")} Pkt</span>
-        </div>`;
-      grid.appendChild(disc);
-    });
-
-    card.appendChild(grid);
-
-    const tot = document.createElement("div");
-    tot.style.cssText = "margin-top:14px;text-align:right;font-weight:800;font-size:16px";
-    tot.innerHTML = `Gesamt: <span style="color:var(--primary)">${totalPoints(a).toLocaleString("de-DE")} Punkte</span>`;
-    card.appendChild(tot);
-
-    root.appendChild(card);
+    const btn = document.createElement("button");
+    btn.className = "person-btn" + (a.id === selectedId ? " active" : "");
+    btn.innerHTML = `${escapeHtml(a.name)} <span class="pts-badge">${totalPoints(a).toLocaleString("de-DE")}</span>`;
+    btn.onclick = () => { selectedId = a.id; render(); };
+    nav.appendChild(btn);
   });
+  root.appendChild(nav);
+
+  // Nur die Karte der ausgewählten Person anzeigen
+  const selected = athletes.find(a => a.id === selectedId);
+  root.appendChild(buildAthleteCard(selected));
 
   // Events: Dropdowns
   root.querySelectorAll(".type-select").forEach(sel => {
@@ -438,7 +487,9 @@ function addAthlete() {
   const inp = document.getElementById("nameInput");
   const name = inp.value.trim();
   if (!name) return;
-  athletes.push(newAthlete(name));
+  const a = newAthlete(name);
+  athletes.push(a);
+  selectedId = a.id;
   inp.value = "";
   inp.focus();
   render();
