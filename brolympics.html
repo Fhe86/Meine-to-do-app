@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#1f6feb" />
+<title>Brolympische Spiele – Tracker</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  :root {
+    --bg: #f5f7fb;
+    --surface: #ffffff;
+    --text: #1a1f2e;
+    --muted: #5b6478;
+    --primary: #1f6feb;
+    --primary-soft: #e7f0ff;
+    --accent: #ff7a45;
+    --green: #10b981;
+    --border: #e5e9f2;
+    --shadow: 0 4px 14px rgba(20, 30, 60, 0.06);
+    --shadow-hover: 0 10px 28px rgba(20, 30, 60, 0.12);
+    --gold: #f5b400;
+    --silver: #9aa3b2;
+    --bronze: #cd7f32;
+    --radius: 18px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.5;
+    min-height: 100vh;
+    padding-bottom: 60px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container { max-width: 1000px; margin: 0 auto; padding: 0 18px; }
+
+  /* ---------- Hero ---------- */
+  .hero {
+    background: linear-gradient(135deg, #1f6feb 0%, #6c5ce7 100%);
+    color: #fff;
+    padding: 40px 0 48px;
+    border-radius: 0 0 32px 32px;
+    text-align: center;
+  }
+  .hero h1 { font-size: clamp(28px, 6vw, 44px); font-weight: 800; letter-spacing: -0.5px; }
+  .hero p { opacity: 0.9; margin-top: 8px; font-size: 16px; }
+
+  section { margin-top: 28px; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
+  }
+
+  h2 { font-size: 20px; font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  h3 { font-size: 15px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* ---------- Add athlete ---------- */
+  .add-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  input[type="text"], input[type="number"], select {
+    font: inherit;
+    padding: 11px 14px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #fff;
+    color: var(--text);
+    outline: none;
+  }
+  input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-soft); }
+  .add-row input[type="text"] { flex: 1; min-width: 180px; }
+
+  button {
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    border-radius: 12px;
+    padding: 11px 18px;
+    background: var(--primary);
+    color: #fff;
+    transition: transform 0.05s ease, background 0.15s ease;
+  }
+  button:hover { background: #1a5fd0; }
+  button:active { transform: scale(0.97); }
+  button.ghost { background: var(--primary-soft); color: var(--primary); }
+  button.danger { background: #fde8e8; color: #d63a3a; padding: 6px 12px; font-size: 13px; }
+  button.danger:hover { background: #f9d2d2; }
+
+  /* ---------- Athlete card ---------- */
+  .athlete { margin-top: 16px; }
+  .athlete-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px; gap: 10px; flex-wrap: wrap;
+  }
+  .athlete-name { font-size: 19px; font-weight: 700; }
+
+  .disciplines { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
+  .discipline {
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px;
+    background: #fbfcfe;
+  }
+  .discipline h3 { margin-bottom: 10px; }
+  .discipline select { width: 100%; margin-bottom: 10px; }
+
+  .attempts { display: flex; gap: 6px; }
+  .attempts .att-wrap { flex: 1; position: relative; }
+  .attempts input { width: 100%; text-align: center; padding: 9px 4px; }
+  .attempts input.best { border-color: var(--green); background: #ecfdf5; font-weight: 700; }
+  .att-label { font-size: 11px; color: var(--muted); text-align: center; display: block; margin-bottom: 3px; }
+
+  .disc-result { margin-top: 10px; font-size: 13px; color: var(--muted); display: flex; justify-content: space-between; }
+  .disc-result strong { color: var(--text); }
+  .disc-points { color: var(--primary); font-weight: 700; }
+
+  /* ---------- Podium / results ---------- */
+  .podium { display: flex; justify-content: center; align-items: flex-end; gap: 14px; margin: 10px 0 24px; flex-wrap: wrap; }
+  .podium .place {
+    text-align: center; border-radius: 16px 16px 0 0; padding: 14px 18px 18px; color: #fff; min-width: 110px;
+    box-shadow: var(--shadow);
+  }
+  .podium .medal-emoji { font-size: 30px; display: block; }
+  .podium .p-name { font-weight: 800; margin-top: 6px; font-size: 16px; }
+  .podium .p-score { font-size: 13px; opacity: 0.95; }
+  .podium .gold   { background: linear-gradient(160deg,#ffd84d,#f5b400); height: 150px; }
+  .podium .silver { background: linear-gradient(160deg,#c4cbd6,#9aa3b2); height: 120px; }
+  .podium .bronze { background: linear-gradient(160deg,#e0a064,#cd7f32); height: 100px; }
+
+  table { width: 100%; border-collapse: collapse; }
+  th, td { text-align: left; padding: 10px 8px; border-bottom: 1px solid var(--border); font-size: 14px; }
+  th { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tr.rank-1 td { background: #fffae8; }
+  .medal { font-size: 18px; }
+
+  .muted { color: var(--muted); font-size: 14px; }
+  .empty { color: var(--muted); text-align: center; padding: 24px; }
+  details { margin-top: 8px; }
+  summary { cursor: pointer; font-weight: 600; color: var(--primary); }
+  details .info { margin-top: 10px; font-size: 14px; color: var(--muted); }
+  details .info li { margin-left: 18px; margin-bottom: 4px; }
+  code { background: var(--primary-soft); color: var(--primary); padding: 1px 6px; border-radius: 6px; font-size: 13px; }
+</style>
+</head>
+<body>
+  <header class="hero">
+    <div class="container">
+      <h1>🏅 Brolympische Spiele</h1>
+      <p>Springen · Laufen · Werfen — fair gewertet, Medaillen für die Besten.</p>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- Teilnehmer hinzufügen -->
+    <section class="card">
+      <h2>👥 Teilnehmer</h2>
+      <div class="add-row">
+        <input type="text" id="nameInput" placeholder="Name eintragen…" maxlength="30" />
+        <button id="addBtn">+ Hinzufügen</button>
+      </div>
+      <p class="muted" style="margin-top:10px">
+        Trage alle Namen ein. Pro Person wählst du je Kategorie die Disziplin und gibst 3 Versuche an –
+        der beste zählt. Alles wird automatisch berechnet.
+      </p>
+    </section>
+
+    <!-- Ergebnis / Podium -->
+    <section class="card" id="resultsCard" style="display:none">
+      <h2>🏆 Wertung</h2>
+      <div class="podium" id="podium"></div>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th><th>Name</th>
+            <th class="num">Springen</th><th class="num">Laufen</th><th class="num">Werfen</th>
+            <th class="num">Gesamt</th>
+          </tr>
+        </thead>
+        <tbody id="leaderboard"></tbody>
+      </table>
+      <details>
+        <summary>Wie wird der faire Score berechnet?</summary>
+        <div class="info">
+          <p>Jede Leistung wird als <strong>Prozent eines Weltklasse-Referenzwerts</strong> ausgedrückt
+          und auf <strong>1000 Punkte pro Disziplin</strong> skaliert. So sind Wahl-Disziplinen fair vergleichbar:</p>
+          <ul>
+            <li>Springen → <code>1000 × Höhe/Weite ÷ Referenz</code> (Hochsprung 2,45 m · Weitsprung 8,95 m)</li>
+            <li>Laufen → <code>1000 × Referenz ÷ Zeit</code> (Sprint 100 m: 9,58 s — schneller ist besser)</li>
+            <li>Werfen → <code>1000 × Weite ÷ Referenz</code> (200-g-Ball 95 m · Kugelstoßen 23,12 m)</li>
+          </ul>
+          <p>Pro Disziplin zählt der beste der 3 Versuche. Die drei Disziplin-Punkte werden summiert
+          (max. 3000). Gold/Silber/Bronze gehen an die höchste Gesamtpunktzahl.</p>
+          <p class="muted">Referenzwerte kannst du im Quelltext oben unter <code>BENCHMARKS</code> anpassen.</p>
+        </div>
+      </details>
+    </section>
+
+    <!-- Teilnehmer-Liste -->
+    <section id="athletes"></section>
+  </main>
+
+<script>
+/* =========================================================================
+   Referenzwerte (Weltklasse-Benchmarks) — hier anpassbar.
+   higher:true  -> mehr ist besser (Weite/Höhe)
+   higher:false -> weniger ist besser (Sprintzeit)
+   ========================================================================= */
+const BENCHMARKS = {
+  hoch:   { label: "Hochsprung",          unit: "m", ref: 2.45,  higher: true  },
+  weit:   { label: "Weitsprung",          unit: "m", ref: 8.95,  higher: true  },
+  sprint: { label: "Sprint (100 m)",      unit: "s", ref: 9.58,  higher: false },
+  ball:   { label: "Weitwurf (200 g)",    unit: "m", ref: 95.0,  higher: true  },
+  kugel:  { label: "Kugelstoßen",         unit: "m", ref: 23.12, higher: true  },
+};
+
+/* Kategorien und ihre wählbaren Disziplinen */
+const CATEGORIES = [
+  { key: "springen", label: "Springen", icon: "🦘", options: ["hoch", "weit"] },
+  { key: "laufen",   label: "Laufen",   icon: "🏃", options: ["sprint"] },
+  { key: "werfen",   label: "Werfen",   icon: "🥎", options: ["ball", "kugel"] },
+];
+
+const STORAGE_KEY = "brolympics_v1";
+let athletes = load();
+
+/* ---------- Persistenz ---------- */
+function load() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+  catch (e) { return []; }
+}
+function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(athletes)); }
+
+function newAthlete(name) {
+  const a = { id: Date.now() + "_" + Math.random().toString(36).slice(2, 7), name };
+  CATEGORIES.forEach(c => { a[c.key] = { type: c.options[0], attempts: ["", "", ""] }; });
+  return a;
+}
+
+/* ---------- Berechnung ---------- */
+function parseVal(v) {
+  if (v === "" || v == null) return null;
+  const n = parseFloat(String(v).replace(",", "."));
+  return isNaN(n) || n <= 0 ? null : n;
+}
+
+// Bester Versuch je Disziplin (max bei higher=true, min bei Zeit)
+function bestAttempt(catData) {
+  const b = BENCHMARKS[catData.type];
+  const vals = catData.attempts.map(parseVal).filter(v => v !== null);
+  if (!vals.length) return null;
+  return b.higher ? Math.max(...vals) : Math.min(...vals);
+}
+
+// Punkte (0–1000) für eine Disziplin
+function points(catData) {
+  const best = bestAttempt(catData);
+  if (best === null) return 0;
+  const b = BENCHMARKS[catData.type];
+  const ratio = b.higher ? best / b.ref : b.ref / best;
+  return Math.round(ratio * 1000 * 10) / 10;
+}
+
+function totalPoints(a) {
+  return CATEGORIES.reduce((sum, c) => sum + points(a[c.key]), 0);
+}
+
+/* ---------- Rendering: Teilnehmer-Karten ---------- */
+function render() {
+  renderAthletes();
+  renderResults();
+  save();
+}
+
+function renderAthletes() {
+  const root = document.getElementById("athletes");
+  root.innerHTML = "";
+  if (!athletes.length) {
+    root.innerHTML = '<div class="card empty">Noch keine Teilnehmer. Trage oben den ersten Namen ein! 👆</div>';
+    return;
+  }
+
+  athletes.forEach(a => {
+    const card = document.createElement("div");
+    card.className = "card athlete";
+
+    const head = document.createElement("div");
+    head.className = "athlete-head";
+    head.innerHTML = `<span class="athlete-name">${escapeHtml(a.name)}</span>`;
+    const del = document.createElement("button");
+    del.className = "danger";
+    del.textContent = "Entfernen";
+    del.onclick = () => { athletes = athletes.filter(x => x.id !== a.id); render(); };
+    head.appendChild(del);
+    card.appendChild(head);
+
+    const grid = document.createElement("div");
+    grid.className = "disciplines";
+
+    CATEGORIES.forEach(cat => {
+      const cd = a[cat.key];
+      const disc = document.createElement("div");
+      disc.className = "discipline";
+
+      // Auswahl-Dropdown (nur wenn mehrere Optionen)
+      let selectHtml = "";
+      if (cat.options.length > 1) {
+        selectHtml = `<select data-id="${a.id}" data-cat="${cat.key}" class="type-select">` +
+          cat.options.map(o =>
+            `<option value="${o}" ${o === cd.type ? "selected" : ""}>${BENCHMARKS[o].label}</option>`
+          ).join("") + `</select>`;
+      } else {
+        selectHtml = `<div style="font-weight:700;margin-bottom:10px">${BENCHMARKS[cd.type].label}</div>`;
+      }
+
+      const unit = BENCHMARKS[cd.type].unit;
+      const best = bestAttempt(cd);
+      const labels = ["1. Versuch", "2. Versuch", "3. Versuch"];
+
+      const attemptsHtml = cd.attempts.map((val, i) => {
+        const isBest = best !== null && parseVal(val) === best;
+        return `<div class="att-wrap">
+          <span class="att-label">${labels[i]}</span>
+          <input type="text" inputmode="decimal" value="${val}" placeholder="–"
+                 class="${isBest ? "best" : ""}"
+                 data-id="${a.id}" data-cat="${cat.key}" data-idx="${i}" />
+        </div>`;
+      }).join("");
+
+      disc.innerHTML = `
+        <h3>${cat.icon} ${cat.label}</h3>
+        ${selectHtml}
+        <div class="attempts">${attemptsHtml}</div>
+        <div class="disc-result">
+          <span>Bester: <strong>${best !== null ? best.toLocaleString("de-DE") + " " + unit : "–"}</strong></span>
+          <span class="disc-points">${points(cd).toLocaleString("de-DE")} Pkt</span>
+        </div>`;
+      grid.appendChild(disc);
+    });
+
+    card.appendChild(grid);
+
+    const tot = document.createElement("div");
+    tot.style.cssText = "margin-top:14px;text-align:right;font-weight:800;font-size:16px";
+    tot.innerHTML = `Gesamt: <span style="color:var(--primary)">${totalPoints(a).toLocaleString("de-DE")} Punkte</span>`;
+    card.appendChild(tot);
+
+    root.appendChild(card);
+  });
+
+  // Events: Dropdowns
+  root.querySelectorAll(".type-select").forEach(sel => {
+    sel.onchange = () => {
+      const a = athletes.find(x => x.id === sel.dataset.id);
+      a[sel.dataset.cat].type = sel.value;
+      render();
+    };
+  });
+  // Events: Versuch-Eingaben (live, ohne Re-Render bei jedem Tastendruck -> nur bei Blur/Change)
+  root.querySelectorAll(".attempts input").forEach(inp => {
+    inp.oninput = () => {
+      const a = athletes.find(x => x.id === inp.dataset.id);
+      a[inp.dataset.cat].attempts[+inp.dataset.idx] = inp.value;
+      updateLive(a, inp.dataset.cat);
+      save();
+    };
+    inp.onchange = render; // beim Verlassen volles Re-Render (Bester-Markierung)
+  });
+}
+
+// Leichtgewichtiges Live-Update der Punkte ohne Fokusverlust
+function updateLive(a, catKey) {
+  renderResults();
+}
+
+/* ---------- Rendering: Podium + Tabelle ---------- */
+function renderResults() {
+  const card = document.getElementById("resultsCard");
+  if (athletes.length < 1) { card.style.display = "none"; return; }
+  card.style.display = "block";
+
+  const ranked = athletes
+    .map(a => ({ a, total: totalPoints(a), parts: CATEGORIES.map(c => points(a[c.key])) }))
+    .sort((x, y) => y.total - x.total);
+
+  // Podium (Top 3, nur wer Punkte hat)
+  const podium = document.getElementById("podium");
+  const medals = ["🥇", "🥈", "🥉"];
+  const cls = ["gold", "silver", "bronze"];
+  const order = [1, 0, 2]; // Silber links, Gold mitte, Bronze rechts
+  podium.innerHTML = "";
+  order.forEach(rankIdx => {
+    const r = ranked[rankIdx];
+    if (!r || r.total <= 0) return;
+    const el = document.createElement("div");
+    el.className = "place " + cls[rankIdx];
+    el.innerHTML = `<span class="medal-emoji">${medals[rankIdx]}</span>
+      <div class="p-name">${escapeHtml(r.a.name)}</div>
+      <div class="p-score">${r.total.toLocaleString("de-DE")} Pkt</div>`;
+    podium.appendChild(el);
+  });
+
+  // Tabelle
+  const tbody = document.getElementById("leaderboard");
+  tbody.innerHTML = "";
+  ranked.forEach((r, i) => {
+    const tr = document.createElement("tr");
+    if (i === 0 && r.total > 0) tr.className = "rank-1";
+    const medal = r.total > 0 && i < 3 ? `<span class="medal">${medals[i]}</span>` : (i + 1);
+    tr.innerHTML = `
+      <td>${medal}</td>
+      <td>${escapeHtml(r.a.name)}</td>
+      <td class="num">${r.parts[0].toLocaleString("de-DE")}</td>
+      <td class="num">${r.parts[1].toLocaleString("de-DE")}</td>
+      <td class="num">${r.parts[2].toLocaleString("de-DE")}</td>
+      <td class="num"><strong>${r.total.toLocaleString("de-DE")}</strong></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+/* ---------- Helpers ---------- */
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c =>
+    ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+/* ---------- Init ---------- */
+function addAthlete() {
+  const inp = document.getElementById("nameInput");
+  const name = inp.value.trim();
+  if (!name) return;
+  athletes.push(newAthlete(name));
+  inp.value = "";
+  inp.focus();
+  render();
+}
+document.getElementById("addBtn").onclick = addAthlete;
+document.getElementById("nameInput").addEventListener("keydown", e => {
+  if (e.key === "Enter") addAthlete();
+});
+
+render();
+</script>
+</body>
+</html>
